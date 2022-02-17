@@ -27,11 +27,22 @@ function App() {
   const getRowState = (row) => game[row].map(cell => cell);
   const getColumnState = (column) => game.map(row => row[column]);
 
-  // TODO check diagonals
   const checkWinner = () => {
     for (let i = 0; i < 3; i++) {
       const row = getRowState(i);
       const column = getColumnState(i);
+
+      const mainDiagonal = [
+        game[0][0],
+        game[1][1],
+        game[2][2]
+      ];
+
+      const inverseDiagonal = [
+        game[2][0],
+        game[1][1],
+        game[0][2]
+      ]
 
       if (row.every(cell => cell.state === "X")) {
         row.forEach(cell => cell.winner = true);
@@ -48,6 +59,15 @@ function App() {
       }
       if (column.every(cell => cell.state === "O")) {
         column.forEach(cell => cell.winner = true);
+        return setWinner("O");
+      }
+
+      if (mainDiagonal.every(cell => cell.state === "X")) {
+        mainDiagonal.forEach(cell => cell.winner = true);
+        return setWinner("X");
+      }
+      if (inverseDiagonal.every(cell => cell.state === "O")) {
+        inverseDiagonal.forEach(cell => cell.winner = true);
         return setWinner("O");
       }
     };
@@ -72,7 +92,6 @@ function App() {
 
   return (
     <div className="page-container">
-     
       <div className="game-container">
         {renderGame()}
       </div>
