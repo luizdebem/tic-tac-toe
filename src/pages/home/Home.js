@@ -3,13 +3,14 @@ import './Home.css';
 
 function App() {
   const [game, setGame] = useState([
-    [{ state: "", i: 0, j: 0 }, { state: "", i: 0, j: 1 }, { state: "", i: 0, j: 2 }],
-    [{ state: "", i: 1, j: 0 }, { state: "", i: 1, j: 1 }, { state: "", i: 1, j: 2 }],
-    [{ state: "", i: 2, j: 0 }, { state: "", i: 2, j: 1 }, { state: "", i: 2, j: 2 }]
+    [{ state: "", i: 0, j: 0, winner: false }, { state: "", i: 0, j: 1, winner: false }, { state: "", i: 0, j: 2, winner: false }],
+    [{ state: "", i: 1, j: 0, winner: false }, { state: "", i: 1, j: 1, winner: false }, { state: "", i: 1, j: 2, winner: false }],
+    [{ state: "", i: 2, j: 0, winner: false }, { state: "", i: 2, j: 1, winner: false }, { state: "", i: 2, j: 2, winner: false }]
   ]);
 
   // "X" || "O"
   const [turn, setTurn] = useState("X");
+  const [winner, setWinner] = useState(null);
 
   const switchTurn = () => {
     turn === "X" ? setTurn("O") : setTurn("X");
@@ -21,17 +22,49 @@ function App() {
       switchTurn();
       setGame(game);
     };
-  }
+  };
+
+  const getRowState = (row) => game[row].map(cell => cell);
+  const getColumnState = (column) => game.map(row => row[column]);
+
+  // TODO check diagonals
+  const checkWinner = () => {
+    for (let i = 0; i < 3; i++) {
+      const row = getRowState(i);
+      const column = getColumnState(i);
+
+      if (row.every(cell => cell.state === "X")) {
+        row.forEach(cell => cell.winner = true);
+        return setWinner("X");
+      }
+      if (row.every(cell => cell.state === "O")) {
+        row.forEach(cell => cell.winner = true);
+        return setWinner("O");
+      }
+
+      if (column.every(cell => cell.state === "X")) {
+        column.forEach(cell => cell.winner = true);
+        return setWinner("X");
+      }
+      if (column.every(cell => cell.state === "O")) {
+        column.forEach(cell => cell.winner = true);
+        return setWinner("O");
+      }
+    };
+  };
 
   const handleCellClick = (i, j) => {
-    updateValue(i, j);
+    if (!winner) {
+      updateValue(i, j);
+      checkWinner();
+    };
   };
 
   const renderGame = () => {
     const response = [];
-    for (let i = 0; i < game.length; i++) {
-      for (let j = 0; j < game[i].length; j++) {
-        response.push(<div className="cell" onClick={() => { handleCellClick(i, j); }}> {game[i][j].state} </div>);
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        response.push(<div className={`cell ${game[i][j].winner ? "winner" : ""}`} onClick={() => { handleCellClick(i, j); }}> {game[i][j].state} </div>);
       }
     };
     return response;
@@ -39,6 +72,7 @@ function App() {
 
   return (
     <div className="page-container">
+     
       <div className="game-container">
         {renderGame()}
       </div>
