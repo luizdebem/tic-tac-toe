@@ -9,6 +9,7 @@
 .game-container {
   width: 70vh;
   height: 70vh;
+  max-width: 90%;
   background-color: white;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
