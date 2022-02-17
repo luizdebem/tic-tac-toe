@@ -26,3 +26,9 @@
 .winner {
   background-color: green;
 }
+
+.result-text {
+  font-size: 5vh;
+  margin-bottom: 15px;
+  color: white;
+}

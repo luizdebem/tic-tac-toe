@@ -66,14 +66,30 @@ function App() {
         mainDiagonal.forEach(cell => cell.winner = true);
         return setWinner("X");
       }
+      if (mainDiagonal.every(cell => cell.state === "O")) {
+        mainDiagonal.forEach(cell => cell.winner = true);
+        return setWinner("O");
+      }
+
+      if (inverseDiagonal.every(cell => cell.state === "X")) {
+        inverseDiagonal.forEach(cell => cell.winner = true);
+        return setWinner("X");
+      }
       if (inverseDiagonal.every(cell => cell.state === "O")) {
         inverseDiagonal.forEach(cell => cell.winner = true);
         return setWinner("O");
       }
+
+      if (clickCount + 1 === 9) {
+        return setWinner("draw");
+      }
     };
   };
 
+  const [clickCount, setClickCount] = useState(0);
+
   const handleCellClick = (i, j) => {
+    setClickCount(clickCount + 1);
     if (!winner) {
       updateValue(i, j);
       checkWinner();
@@ -92,6 +108,7 @@ function App() {
 
   return (
     <div className="page-container">
+      <div className="result-text" style={{ opacity: winner ? 1 : 0 }}>{ winner && winner !== "draw" ? `"${winner}" foi vencedor!` : "Empate!" }</div>
       <div className="game-container">
         {renderGame()}
       </div>
