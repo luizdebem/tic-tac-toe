@@ -2,26 +2,35 @@ import { useState } from 'react';
 import './Home.css';
 
 function App() {
-  const [game, setGame] = useState([
+  const gameInitialState = [
     [{ state: "", i: 0, j: 0, winner: false }, { state: "", i: 0, j: 1, winner: false }, { state: "", i: 0, j: 2, winner: false }],
     [{ state: "", i: 1, j: 0, winner: false }, { state: "", i: 1, j: 1, winner: false }, { state: "", i: 1, j: 2, winner: false }],
     [{ state: "", i: 2, j: 0, winner: false }, { state: "", i: 2, j: 1, winner: false }, { state: "", i: 2, j: 2, winner: false }]
-  ]);
+  ];
+
+  const [game, setGame] = useState(gameInitialState);
+
+  const [clickCount, setClickCount] = useState(0);
 
   // "X" || "O"
   const [turn, setTurn] = useState("X");
   const [winner, setWinner] = useState(null);
+
+  const restartGame = () => {
+    setGame(gameInitialState);
+    setWinner(null);
+    setTurn("X");
+    setClickCount(0);
+  };
 
   const switchTurn = () => {
     turn === "X" ? setTurn("O") : setTurn("X");
   };
 
   const updateValue = (i, j) => {
-    if (game[i][j].state === "") {
-      game[i][j].state = turn;
-      switchTurn();
-      setGame(game);
-    };
+    game[i][j].state = turn;
+    switchTurn();
+    setGame(game);
   };
 
   const getRowState = (row) => game[row].map(cell => cell);
@@ -86,9 +95,9 @@ function App() {
     };
   };
 
-  const [clickCount, setClickCount] = useState(0);
-
   const handleCellClick = (i, j) => {
+    if (game[i][j].state !== "") return;
+
     setClickCount(clickCount + 1);
     if (!winner) {
       updateValue(i, j);
@@ -108,7 +117,7 @@ function App() {
 
   return (
     <div className="page-container">
-      <div className="result-text" style={{ opacity: winner ? 1 : 0 }}>{ winner && winner !== "draw" ? `"${winner}" foi vencedor!` : "Empate!" }</div>
+      <div className="result-text" style={{ opacity: winner ? 1 : 0 }}>{winner && winner !== "draw" ? `"${winner}" foi vencedor!` : "Empate!"} <button onClick={() => { restartGame(); }}>Reiniciar</button></div>
       <div className="game-container">
         {renderGame()}
       </div>
